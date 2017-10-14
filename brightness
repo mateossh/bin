@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# author: mateossh
+# dependencies: none
+
+MAX_BRIGHTNESS=$(cat /sys/class/backlight/intel_backlight/max_brightness)
+STEP=15
+NOTIFICATIONS=1
+let DELTA=$MAX_BRIGHTNESS/$STEP
+
+show_usage() {
+  echo "Usage: $(basename "$0") [up | down | help]"
+  exit 1
+}
+
+send_notify() {
+  icon="%{c}%{T2}\uf185%{T1} "
+  notify "${icon} $(get_brightness)"
+}
+
+get_brightness() {
+  cat /sys/class/backlight/intel_backlight/brightness
+}
+
+increase_brightness() {
+  let new=$(get_brightness)+$DELTA
+  if [[ $new -gt $MAX_BRIGHTNESS ]]; then
+    sudo tee /sys/class/backlight/intel_backlight/brightness <<< "$MAX_BRIGHTNESS"
+  else
+    sudo tee /sys/class/backlight/intel_backlight/brightness <<< "$new"
+  fi
+  if [[ $NOTIFICATIONS == 1 ]]; then
+    send_notify
+  fi
+}
+
+decrease_brightness() {
+  let new=$(get_brightness)-$DELTA
+  if [[ $new -lt 0 ]]; then
+    sudo tee /sys/class/backlight/intel_backlight/brightness <<< 0
+  else
+    sudo tee /sys/class/backlight/intel_backlight/brightness <<< "$new"
+  fi
+  if [[ $NOTIFICATIONS == 1 ]]; then
+    send_notify
+  fi
+}
+
+main() {
+  case $1 in
+    help) show_usage ;;
+    up)   increase_brightness ;;
+    down) decrease_brightness ;;
+    a)    a ;;
+  esac
+}
+
+main "$@"

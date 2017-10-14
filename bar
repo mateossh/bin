@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# display_width=$(xdotool getdisplaygeometry | awk -F " " '{print $1}')
+# display_height=$(xdotool getdisplaygeometry | awk -F " " '{print $2}')
+
+# geometry="$display_width"x24+12+0
+geometry=1594x24
+
+font_1='GohuFont Powerline-8'
+font_2='FontAwesome-8'
+
+echo "$geometry"
+
+barstatus | lemonbar -b -f 'GohuFont Powerline-8' -f 'FontAwesome-8' -g "$geometry" -a "bar"

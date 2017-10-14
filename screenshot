@@ -1,0 +1,42 @@
+#!/bin/bash
+#
+# author: mateossh
+# dependencies: scrot
+
+DIR="$HOME/Screenshots"
+NOTIFICATIONS=1
+
+usage() {
+  echo "Usage: $(basename "$0") [all | clip | help]"
+  exit 1
+}
+
+send_notify() {
+  icon="%{c}%{T2}\uf03e%{T1} "
+  notify "${icon} saved!"
+}
+
+take_screen() {
+  scrot "$DIR"/%Y-%m-%d-T-screenshot.png
+  if [[ $NOTIFICATIONS == 1 ]]; then
+    send_notify
+  fi
+}
+
+take_clip() {
+  scrot -s "$DIR"/%Y-%m-%d-T-screenshot.png
+  if [[ $NOTIFICATIONS == 1 ]]; then
+    send_notify
+  fi
+}
+
+main() {
+  case "$1" in
+    help) usage ;;
+    clip) take_clip ;;
+    all)  take_screen ;;
+    *)    usage ;;
+  esac
+}
+
+main "$@"

@@ -1,0 +1,48 @@
+#!/bin/bash
+#
+# author: gh:randomn4me, edited by mateossh
+
+FILE="$HOME/.todo"
+
+usage() {
+    echo "Usage: $(basename "$0") [-hsne] [-a todo] [-d <line-nr>]"
+    exit 1
+}
+
+add() {
+    test -n "$1" || usage
+    echo "$1" | tee -a "$FILE" 1> /dev/null
+    sort "$FILE" -o "$FILE"
+}
+
+delete() {
+    test -n "$1" || usage
+    sort "$FILE" -o "$FILE"
+    sed -i "$1d" "$FILE"
+}
+
+number() {
+    <"$FILE" wc -l
+}
+
+show() {
+    cat $FILE | sort | awk '{ print FNR " " $0}'
+}
+
+edit() {
+    $EDITOR $TODO
+}
+
+main() {
+    case "$1" in
+        -n) number ;;
+        -s) show ;;
+        -e) edit ;;
+      -h|?) usage ;;
+        -a) add "$2" ;;
+        -d) delete "$2" ;;
+         *) show
+    esac
+}
+
+main "$@"

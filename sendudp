@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# author: github/mateossh
+# dependecies: none
+
+IP=$1
+PORT=$2
+MESSAGE=$3
+
+if [ -z "$IP" ] || [ -z "$PORT" ] || [ -z "$MESSAGE" ]; then
+        (>&2 echo "Missing parameter. Exiting.")
+        exit 1
+fi
+
+echo "$3" > /dev/udp/"$1"/"$2"

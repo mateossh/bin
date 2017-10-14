@@ -1,0 +1,34 @@
+#!/bin/bash
+
+battery() {
+  percent=$(cat /sys/class/power_supply/BAT0/capacity)
+  power=$(cat /sys/class/power_supply/BAT0/status)
+
+  if [[ $power == "Charging" || $power == "Unknown" ]]; then
+    echo "*charging* $percent%"
+  else
+    if [ "$percent" -eq 100 ]; then
+      # 100
+      echo "%{T2}\uf240%{T1} $percent%"
+    elif [ "$percent" -gt 75 ]; then
+      # > 80
+      echo "%{T2}\uf241%{T1} $percent%"
+    elif [ "$percent" -gt 50 ]; then
+      # > 30
+      echo "%{T2}\uf242%{T1} $percent%"
+    else
+      echo "%{T2}\uf243%{T1} $percent%"
+    fi
+  fi
+}
+
+clock() {
+  datetime=$(date +"%d %b %y %H:%M")
+  echo "$datetime"
+}
+
+while true;
+do
+  echo -e "%{r} | $(battery) | $(clock)"
+  sleep ".35s"
+done

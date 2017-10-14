@@ -1,0 +1,78 @@
+#!/bin/bash
+#
+# author: mateossh
+# dependecies: amixer, lemonbar (notify alias)
+
+VOLUME_STEP=5
+NOTIFICATIONS=1
+
+show_usage() {
+  echo "Usage: $(basename "$0") [up | down | mute | mic | help]"
+  exit 1
+}
+
+send_notify() {
+  if [[ $(get_mute) == "off" ]]; then
+    icon="%{c}%{T2}\uf026%{T1} "
+  else
+    icon="%{c}%{T2}\uf028%{T1} "
+  fi
+  notify "${icon} $(get_volume)"
+}
+
+get_mute() {
+  amixer get Master | grep "Front Left:" | tr -s ' ' ';' | cut -f 7 -d ';' |\
+  tr -d '[]'
+}
+
+get_volume() {
+  amixer get Master | grep "Front Left:" | tr -s ' ' ';' | cut -f 6 -d ';' |\
+  tr -d '[]' | tr -d '%'
+}
+
+increase_volume() {
+  if [[ $(get_volume) -lt 100 ]]; then
+    let vol=$(get_volume)+$VOLUME_STEP
+    amixer set Master $vol% > /dev/null
+  fi
+  if [[ $NOTIFICATIONS == 1 ]]; then
+    send_notify
+  fi
+}
+
+decrease_volume() {
+  if [[ $(get_volume) -gt 0 ]]; then
+    let vol=$(get_volume)-$VOLUME_STEP
+    amixer set Master $vol% > /dev/null
+  fi
+  if [[ $NOTIFICATIONS == 1 ]]; then
+    send_notify
+  fi
+}
+
+mute_master() {
+  amixer set Master toggle > /dev/null
+  if [[ $NOTIFICATIONS == 1 ]]; then
+    send_notify
+  fi
+}
+
+mute_microphone() {
+  amixer set Capture toggle > /dev/null
+  if [[ $NOTIFICATIONS == 1 ]]; then
+    send_notify
+  fi
+}
+
+
+main() {
+  case "$1" in
+    help)  usage ;;
+    up)    increase_volume ;;
+    down)  decrease_volume ;;
+    mute)  mute_master ;;
+    mic)   mute_microphone ;;
+  esac
+}
+
+main "$@"
