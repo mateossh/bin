@@ -1,0 +1,75 @@
+#!/bin/bash
+# author: gh:mateossh
+
+PROJECT_NAME=$1
+PROJECTS_DIR="$HOME/Git"
+
+WIDTH=40
+HEIGHT=15
+CHOICE_HEIGHT=8
+BACKTITLE="new-project"
+TITLE="Choose project type"
+MENU="Choose one of the following options:"
+OPTIONS=(1 "Web"
+         2 "PHP"
+         3 "Go"
+         4 "Node"
+         5 "Ruby"
+         6 "Python"
+         7 "Shell")
+
+if [ -z "$PROJECT_NAME" ]; then
+        (>&2 echo "Project name is missing. Exiting.")
+        exit
+fi
+
+function main() {
+        CHOICE=$(dialog --clear \
+                        --backtitle "$BACKTITLE" \
+                        --title "$TITLE" \
+                        --menu "$MENU" \
+                        $HEIGHT $WIDTH $CHOICE_HEIGHT \
+                        "${OPTIONS[@]}" \
+                        2>&1 >/dev/tty)
+
+        clear
+        case $CHOICE in
+                1)
+                  echo "You chose web"
+                  create_project index.html
+                  ;;
+                2)
+                  echo "You chose php"
+                  create_project index.php
+                  ;;
+                3)
+                  echo "You chose go"
+                  create_project main.go
+                  ;;
+                4)
+                  echo "You chose node"
+                  create_project index.js
+                  cd "$PROJECTS_DIR/$PROJECT_NAME" && npm init --yes
+                  ;;
+                5)
+                  echo "You chose ruby"
+                  create_project main.rb
+                  cd "$PROJECTS_DIR/$PROJECT_NAME" && bundle init
+                  ;;
+                6)
+                  echo "You chose python"
+                  create_project main.py
+                  ;;
+                7)
+                  echo "You chose shell"
+                  create_project main.sh
+                  ;;
+        esac
+}
+
+function create_project() {
+  mkdir -p "$PROJECTS_DIR/$PROJECT_NAME"
+  touch "$PROJECTS_DIR/$PROJECT_NAME/$1"
+}
+
+main

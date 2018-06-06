@@ -1,0 +1,44 @@
+#!/bin/bash
+#
+# author: gh:mateossh
+# dependecies: playerctl, mpc
+
+function media_playpause(){
+  if [[ $(pgrep mpd) != "" ]]; then
+    # mpd is running
+
+    if [[ $(mpc status | awk 'NR==2 {print $1}') == "[playing]" ]]; then
+      mpc pause > /dev/null 2>&1
+    elif [[ $(mpc status | awk 'NR==2 {print $1}') == "[paused]" ]]; then
+      mpc play > /dev/null 2>&1
+    fi
+  else
+    playerctl play-pause
+  fi
+}
+
+function media_prev(){
+  if [[ $(pgrep mpd) != "" ]]; then
+    mpc prev > /dev/null 2>&1
+  else
+    playerctl previous
+  fi
+}
+
+function media_next(){
+  if [[ $(pgrep mpd) != "" ]]; then
+    mpc next > /dev/null 2>&1
+  else
+    playerctl next
+  fi
+}
+
+main() {
+  case $1 in
+    playpause)  media_playpause ;;
+    prev)       media_prev ;;
+    next)       media_next ;;
+  esac
+}
+
+main "$@"

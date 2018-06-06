@@ -1,0 +1,81 @@
+#!/bin/bash
+#
+# author: mateossh
+# dependencies: xdotool
+#
+# |-----|-----|-----|
+# |  1  |  2  |  3  |
+# |-----|-----|-----|
+# |  4  |  5  |  6  |
+# |-----|-----|-----|
+# |  7  |  8  |  9  |
+# |-----|-----|-----|
+
+SCREEN_WIDTH=$(xdpyinfo | grep dimensions | grep -o '[0-9x]*' | head -n1 | awk -F 'x' '{print $1}')
+SCREEN_HEIGHT=$(xdpyinfo | grep dimensions | grep -o '[0-9x]*' | head -n1 | awk -F 'x' '{print $2}')
+
+show_usage() {
+	echo "Usage: $(basename "$0") [id]"
+	exit 1
+}
+
+main() {
+	window_width=$(xdotool getactivewindow getwindowgeometry --shell | head -4 | tail -1 | sed 's/[^0-9]*//')
+	window_height=$(xdotool getactivewindow getwindowgeometry --shell | head -5 | tail -1 | sed 's/[^0-9]*//')
+
+	case "$1" in
+		1)
+			x=0
+			y=0
+			xdotool getactivewindow windowmove "$x" "$y"
+			;;
+		2)
+			x=$((SCREEN_WIDTH/2-window_width/2))
+			y=0
+			xdotool getactivewindow windowmove "$x" "$y"
+			;;
+		3)
+			x=$((SCREEN_WIDTH-window_width))
+			y=0
+			xdotool getactivewindow windowmove "$x" "$y"
+			;;
+		4)
+			x=0
+			y=$((SCREEN_HEIGHT/2-window_height/2))
+			xdotool getactivewindow windowmove "$x" "$y"
+			;;
+		5)
+			x=$((SCREEN_WIDTH/2-window_width/2))
+			y=$((SCREEN_HEIGHT/2-window_height/2))
+			xdotool getactivewindow windowmove "$x" "$y"
+			;;
+		6)
+			x=$((SCREEN_WIDTH-window_width))
+			y=$((SCREEN_HEIGHT/2-window_height/2))
+			xdotool getactivewindow windowmove "$x" "$y"
+			;;
+		7)
+			x=0
+			y=$((SCREEN_HEIGHT-window_height))
+			xdotool getactivewindow windowmove "$x" "$y"
+			;;
+		8)
+			x=$((SCREEN_WIDTH/2-window_width/2))
+			y=$((SCREEN_HEIGHT-window_height))
+			xdotool getactivewindow windowmove "$x" "$y"
+			;;
+		9)
+			x=$((SCREEN_WIDTH-window_width))
+			y=$((SCREEN_HEIGHT-window_height))
+			xdotool getactivewindow windowmove "$x" "$y"
+			;;
+		help)
+			show_usage
+			;;
+		*)
+			show_usage
+			;;
+	esac
+}
+
+main "$@"

@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# author: gh/mateossh
+
+DESIGN=$(cat /sys/class/power_supply/BAT0/energy_full_design)
+CURRENT=$(cat /sys/class/power_supply/BAT0/energy_full)
+
+percentage=$(bc -l <<< $CURRENT/$DESIGN*100)
+
+echo "Current battery efficiency: $percentage"
