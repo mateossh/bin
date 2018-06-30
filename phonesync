@@ -1,0 +1,19 @@
+#!/bin/bash
+#
+# author: gh:dippindots modified by gh:mateossh
+# dependencies adb-sync
+
+declare -A backups
+backups[Backdrops]=~/Backups/Phone/Misc/Backdrops
+backups[DCIM]=~/Backups/Phone/Photos/DCIM
+backups[Downloads]=~/Backups/Phone/Downloads
+backups[Pictures/Screenshots]=~/Backups/Phone/Pictures/Screenshots
+backups[Pictures/Telegram]=~/Backups/Phone/Pictures/Telegram
+backups[Pictures/Telegram X]=~/Backups/Phone/Pictures/Telegram X
+backups[Pictures/Twitter]=~/Backups/Phone/Pictures/Twitter
+backups[Snapchat]=~/Backups/Phone/Photos/Snapchat
+
+for DIR in "${!backups[@]}"; do
+    echo "Backing up /storage/emulated/0/${DIR} -> ${backups[$DIR]}"
+    adb-sync --reverse "/storage/emulated/0/${DIR}/" "${backups[$DIR]}"
+done
