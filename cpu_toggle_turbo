@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# author: gh:mateossh
+
+STATUS=$(cat /sys/devices/system/cpu/intel_pstate/no_turbo)
+NOTIFICATIONS=1
+
+main() {
+    if [[ $STATUS -ne 0 ]]; then
+        tee /sys/devices/system/cpu/intel_pstate/no_turbo <<< 0
+
+        if [[ $NOTIFICATIONS -eq 1 ]]; then
+            notify-send "CPU Management" "Intel Turbo Boost disabled"
+        fi
+    elif [[ $STATUS -ne 1 ]]; then
+        tee /sys/devices/system/cpu/intel_pstate/no_turbo <<< 1
+
+        if [[ $NOTIFICATIONS -eq 1 ]]; then
+            notify-send "CPU Management" "Intel Turbo Boost enabled"
+        fi
+    fi
+
+}
+
+main "$@"

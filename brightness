@@ -51,7 +51,6 @@ main() {
     help) show_usage ;;
     up)   increase_brightness ;;
     down) decrease_brightness ;;
-    a)    a ;;
   esac
 }
 
